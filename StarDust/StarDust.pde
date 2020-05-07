@@ -65,7 +65,7 @@ class Cube
     x = random (width*-2, width*2);
     y = random (height*-2, height*2);
     z = random(startingZ, maxZ);
-    size = random(25, 50);
+    size = random(0,10);
     rotX = random(-3, 3);
     rotY = random(-3, 3);
     rotZ = random(-3, 3);
@@ -96,7 +96,7 @@ class Cube
     map(cBlue, 0, 1, 0, 255), 
       //alpha
       map(inten, 0,20, 0x00, 0xff));
-    box(size+size*inten/50);
+    box(size+size*inten/20);
     popMatrix();
     z+=2*inten;
 

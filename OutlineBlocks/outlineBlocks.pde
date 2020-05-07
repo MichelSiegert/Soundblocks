@@ -34,7 +34,7 @@ void setup()
 
 void draw()
 {
-  background (0, 0, intensity*2, 5);
+  background (0, 0,0x22, 5);
   intensity= 0;
   yDif=0;
   xDif += inc;
