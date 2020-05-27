@@ -20,7 +20,7 @@ void setup()
 
   minim = new Minim(this);
 
-  input = minim.loadFile("http://stream.electroradio.fm/192k");
+  input = minim.loadFile("mixdown.mp3");
 
 
   input.play();
