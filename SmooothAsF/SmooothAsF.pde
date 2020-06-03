@@ -1,4 +1,4 @@
-// Library importieren
+  // Library importieren
 import ddf.minim.*;
 
 // Objekte erstellen
@@ -8,7 +8,7 @@ AudioPlayer input;
 PImage img;
 float maxZ = 1000;
 float xDif=0, yDif=random (0, 10000), inc=0.005;
-int numCubes=1024;
+int numCubes=1024, sqrtCubes= (int)Math.sqrt(numCubes);
 float intensity;
 int counter=0;
 Cube[] cubes;
@@ -30,14 +30,14 @@ void setup()
   input.play();
 
   cubes = new Cube[numCubes];
-  for (int i=0; i<(int)Math.sqrt(numCubes); i++)
+  for (int i=0; i<(int)sqrtCubes; i++)
   {
-    for (int j=0; j<(int)Math.sqrt(numCubes); j++)
+    for (int j=0; j<(int)sqrtCubes; j++)
     {
-      color c = img.get((int)(i*width/Math.sqrt(numCubes)),(int)((j*height/Math.sqrt(numCubes))));
-      cubes[i+j*(int)Math.sqrt(numCubes)] = new Cube(
-      (int)map(i,0,(float)Math.sqrt(numCubes),0,width),
-      (int)map(j,0,(float)Math.sqrt(numCubes),0,height),c);
+      color c = img.get((int)(i*width/sqrtCubes),(int)((j*height/sqrtCubes)));
+      cubes[i+j*sqrtCubes] = new Cube(
+      (int)map(i,0,(float)sqrtCubes,0,width),
+      (int)map(j,0,(float)sqrtCubes,0,height),c);
     }
   }
 }
@@ -48,14 +48,16 @@ void draw()
   yDif=0;
   xDif += inc;
   float[] buffer = input.mix.toArray();
-  for (int i=0; i < numCubes; i++)
+  for (int i=0; i< sqrtCubes; i++)
   {
+    for (int j=0; j < sqrtCubes; j++)
+    {
     yDif += inc;
-    intensity +=abs( buffer[(int)map(i, 0, numCubes, 1, buffer.length)]/(i+1))*2;
-    cubes[i].display(buffer[(int)map(i, 0, numCubes, 1, buffer.length)], intensity);
+    intensity +=abs( buffer[(int)map(i * sqrtCubes + j, 0, numCubes, 1, buffer.length)]/(i*sqrtCubes+j+1))*2;
+    cubes[i*sqrtCubes+j].display(buffer[(int)map(i * sqrtCubes + j, 0, numCubes, 1, buffer.length)], intensity);
   }
-  counter = (counter+1) % 200;
-  if (counter ==0){pickImg();}
+  }
+  saveFrame("screenshots/sceen_#####.tif");
 }
 
 class Cube
@@ -100,11 +102,6 @@ class Cube
     rotateY(sumRotY);
     rotateZ(sumRotZ);
 
-    //play around w/ this alot. ^
-    cRed =  (cRed*49/50+noise(xDif, yDif)*audio*5/4)%1;
-    cGreen= (cGreen*49/50 + noise(yDif)*audio*5/4)%1; 
-    cBlue=  (cBlue*49/50+audio*1/3) %1;
-
     fill(red(c),
     green(c),
     blue(c), 
@@ -124,11 +121,29 @@ class Cube
       z = startingZ;
     }
   }
+  
+  void setColor(color c1)
+  {
+    this.c = c1;
+  }
 }
 
+void mouseClicked() 
+{
+  pickImg();
+  
+    for (int i=0; i< sqrtCubes; i++)
+  {
+    for (int j=0; j < sqrtCubes; j++)
+    {
+      color c = img.get((int)(i*width/sqrtCubes),(int)((j*height/sqrtCubes)));
+      cubes[i+sqrtCubes*j].setColor(c);
+    }
+  }
+}
 void pickImg()
 {
-  int i= (int)random(2);
+  int i= (int)random(4);
   img = loadImage("PIC"+i+".jpg");
   img.resize(width,height);
 }
